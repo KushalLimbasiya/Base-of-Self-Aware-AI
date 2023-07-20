@@ -1,0 +1,85 @@
+{
+    "intents":[
+        {
+            "tag":"greeting",
+            "patterns":["hello","hii","hey","wake up","jarvis"
+            ],
+            "responses":["Hello Sir","How Are You Sir.","Always For You Sir",
+                "Hello","Here's Your Assistant."
+            ]
+        },
+        {
+            "tag":"bye",
+            "patterns":["bye","goodbye","see you later","sleep","exit"
+            ],
+            "responses":["Bye.","I am Going.","Bye Sir.","Good Bye",
+                "It'll be Nice To Meet You Again.","See You Later"
+            ]
+        },
+        {
+            "tag":"stop",
+            "patterns":["stop playing","stop"
+            ],
+            "responses":["ok sir any query about this"
+            ]
+        },
+        {
+            "tag":"health",
+            "patterns":["how are you","how you","are you fine?","are you good"
+            ],
+            "responses":["Fine.","Perfect.","Cool.",
+                "Like You.","Are you Fine? I'm Fine."
+            ]
+        },
+        {
+            "tag":"identity",
+            "patterns":["your name","what is your name","who are you","what are you","what's your full form","who create you"
+            ],
+            "responses":["Jarvis","I Am Jarvis.","An A.I Assistant.",
+                "My Name is Jarvis.","Great Assistant","my full form is Just A Rather Very Intelligent System","kushal limbasiya and meet paladiya created me"
+            ]
+        },
+        {
+            "tag":"time",
+            "patterns":["what is time","time","samay","what's the time"
+            ],
+            "responses":["time"
+            ]
+        },
+        {
+            "tag":"date",
+            "patterns":["what is date","date","tareek","what's the date"
+            ],
+            "responses":["date"
+            ]
+        },
+        {
+            "tag":"day",
+            "patterns":["what is day","day","din","what's the day","today"
+            ],
+            "responses":["day"
+            ]
+        },
+        {
+            "tag":"wikipedia",
+            "patterns":["who is","about","what is","wikipedia"
+            ],
+            "responses":["wikipedia"
+            ]
+        },
+        {
+            "tag":"google",
+            "patterns":["google search","google","search"
+            ],
+            "responses":["google"
+            ]
+        },
+        {
+            "tag":"play",
+            "patterns":["play song","play"
+            ],
+            "responses":["playing"
+            ]
+        }
+    ]
+}
