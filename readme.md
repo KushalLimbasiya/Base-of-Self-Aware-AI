@@ -32,8 +32,8 @@ To install and run the project locally, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/KushalLimbasiya/Base-of-Self-Aware-AI.git`
 2. Navigate to the project directory: `cd Base-of-Self-Aware-AI`
-3. Install dependencies: `npm install`
-4. Start the project: `npm start`
+3. Install dependencies: `pip install -r requirements.txt`
+4. Start the project: `python3 Jarvis.py`
 
 ## Usage
 
