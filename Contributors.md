@@ -1,2 +1,2 @@
 #Contributors 
-- [ Kushal Limbasiya ] (https://github.com/KushalLimbasiya)
+- [Kushal Limbasiya] (https://github.com/KushalLimbasiya)
