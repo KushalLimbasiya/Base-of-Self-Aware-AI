@@ -29,7 +29,7 @@ Base of Self-Aware AI is an open-source project that serves as a foundational fr
 ## Installation
 
 To install and run the project locally, follow these steps:
-
+ 
 1. Clone the repository: `git clone https://github.com/KushalLimbasiya/Base-of-Self-Aware-AI.git`
 2. Navigate to the project directory: `cd Base-of-Self-Aware-AI`
 3. Install dependencies: `pip install -r requirements.txt`
