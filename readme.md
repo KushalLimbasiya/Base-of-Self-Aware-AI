@@ -58,5 +58,6 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
 <p align="center">
-  Made with ❤️ by @KushalLimbasiya & @MieetPaladiya
+  Made with ❤️ by <a href="https://github.com/KushalLimbasiya">Kushal Limbasiya</a> & <a href="https://github.com/MeettPaladiya">Meett Paladiya</a>
 </p>
+
