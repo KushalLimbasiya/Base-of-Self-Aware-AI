@@ -58,5 +58,5 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
 <p align="center">
-  Made with ❤️ by Kushal Limbasiya
+  Made with ❤️ by @KushalLimbasiya & @MieetPaladiya
 </p>
