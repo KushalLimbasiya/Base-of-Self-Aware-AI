@@ -1,12 +1,12 @@
 """
-Input validation and sanitization utilities for Jarvis.
+Input validation and sanitization utilities for Atom.
 Provides security against malicious inputs and data validation.
 """
 
 import re
 from Logger import setup_logger
 
-logger = setup_logger(__name__, 'jarvis.log')
+logger = setup_logger(__name__, 'atom.log')
 
 def _get_max_length():
     """Get max input length from config, with fallback."""

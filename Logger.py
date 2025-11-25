@@ -1,4 +1,4 @@
-"""Enhanced logging system for Jarvis with metrics tracking and structured logging.
+"""Enhanced logging system for Atom with metrics tracking and structured logging.
 
 Features:
 - Standard logging with console and file handlers
@@ -62,7 +62,7 @@ class StructuredFormatter(logging.Formatter):
 
 
 class MetricsLogger:
-    """Performance metrics tracking for Jarvis.
+    """Performance metrics tracking for Atom.
     
     Tracks:
     - Response times

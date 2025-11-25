@@ -34,7 +34,34 @@
       "intents": {},
       "end_time": "2025-11-26T00:29:41.597314",
       "duration_seconds": 19.95821
+    },
+    {
+      "start_time": "2025-11-26T00:37:13.084630",
+      "total_queries": 2,
+      "successful_queries": 2,
+      "failed_queries": 0,
+      "avg_confidence": 0.9988246560096741,
+      "avg_response_time": 10.047845125198364,
+      "intents": {
+        "wikipedia": 1,
+        "google": 1
+      },
+      "end_time": "2025-11-26T00:38:03.348457",
+      "duration_seconds": 50.263837
+    },
+    {
+      "start_time": "2025-11-26T00:42:03.244222",
+      "total_queries": 1,
+      "successful_queries": 1,
+      "failed_queries": 0,
+      "avg_confidence": 0.7980552911758423,
+      "avg_response_time": 21.301531553268433,
+      "intents": {
+        "wikipedia": 1
+      },
+      "end_time": "2025-11-26T00:42:49.025165",
+      "duration_seconds": 45.780949
     }
   ],
-  "total_queries": 1
+  "total_queries": 4
 }

@@ -1,4 +1,4 @@
-"""Training script for Jarvis intent classification model.
+"""Training script for Atom intent classification model.
 
 This script:
 1. Loads intents from intents.json
@@ -6,7 +6,7 @@ This script:
 3. Trains a neural network to classify intents
 4. Saves the trained model to TrainData.pth
 
-Run this script before using Jarvis to generate the model file.
+Run this script before using Atom to generate the model file.
 """
 
 import numpy as np

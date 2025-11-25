@@ -1,4 +1,4 @@
-"""Memory System for Jarvis - Multi-tier conversation history and context management.
+"""Memory System for Atom - Multi-tier conversation history and context management.
 
 This module implements a multi-tier memory system inspired by human cognition:
 1. Working Memory: In-memory buffer for current conversation (short-term)
@@ -18,7 +18,7 @@ from dataclasses import dataclass, asdict
 from collections import deque
 from Logger import setup_logger
 
-logger = setup_logger(__name__, 'jarvis.log')
+logger = setup_logger(__name__, 'atom.log')
 
 
 @dataclass

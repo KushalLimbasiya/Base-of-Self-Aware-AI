@@ -9,7 +9,7 @@ import threading
 from Logger import setup_logger
 from Config import get_config
 
-logger = setup_logger(__name__, 'jarvis.log')
+logger = setup_logger(__name__, 'atom.log')
 config = get_config()
 
 # Global variables for interrupt control

@@ -1,4 +1,4 @@
-"""Neural network architecture for Jarvis intent classification.
+"""Neural network architecture for Atom intent classification.
 
 This module defines the feedforward neural network used for
 classifying user intents from tokenized speech input.
