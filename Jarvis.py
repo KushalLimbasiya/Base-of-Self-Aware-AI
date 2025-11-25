@@ -3,27 +3,33 @@ import json
 import torch
 from Brain import NeuralNet
 from NeuralNetwork import bag_of_words ,tokenize
+from Logger import setup_logger
+
+logger = setup_logger(__name__, 'jarvis.log')
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+logger.info(f"Using device: {device}")
 
 try:
     with open("intents.json",'r') as json_data:
         intents = json.load(json_data)
+    logger.info("Successfully loaded intents.json")
 except FileNotFoundError:
-    print("Error: intents.json not found. Please ensure the file exists.")
+    logger.critical("Error: intents.json not found. Please ensure the file exists.")
     exit(1)
 except json.JSONDecodeError as e:
-    print(f"Error: Invalid JSON in intents.json: {e}")
+    logger.critical(f"Error: Invalid JSON in intents.json: {e}")
     exit(1)
 
 FILE = "TrainData.pth"
 try:
     data = torch.load(FILE)
+    logger.info(f"Successfully loaded model from {FILE}")
 except FileNotFoundError:
-    print(f"Error: {FILE} not found. Please run Train.py first to generate the model.")
+    logger.critical(f"Error: {FILE} not found. Please run Train.py first to generate the model.")
     exit(1)
 except Exception as e:
-    print(f"Error loading model file: {e}")
+    logger.critical(f"Error loading model file: {e}")
     exit(1)
 
 input_size = data["input_size"]
@@ -98,25 +104,28 @@ def Main():
                     else:
                         Say(reply)
         else:
-            print(f"Low confidence ({prob.item():.2f}) - Not executing command")
+            logger.warning(f"Low confidence ({prob.item():.2f}) for tag '{tag}' - Not executing command")
     
     except KeyboardInterrupt:
-        print("\nInterrupted by user")
+        logger.info("Interrupted by user")
         Say("Goodbye!")
         exit()
     except Exception as e:
-        print(f"Error in Main: {e}")
+        logger.error(f"Error in Main: {e}", exc_info=True)
         # Continue running despite errors
 
 if __name__ == "__main__":
     try:
-        print("Jarvis is starting...")
+        logger.info("="*50)
+        logger.info("Jarvis is starting...")
+        logger.info(f"Model loaded with {len(tags)} intents")
+        logger.info("="*50)
         while True:
             Main()
     except KeyboardInterrupt:
-        print("\nShutting down Jarvis...")
+        logger.info("Shutting down Jarvis...")
         Say("Goodbye!")
     except Exception as e:
-        print(f"Fatal error: {e}")
+        logger.critical(f"Fatal error: {e}", exc_info=True)
         exit(1)
 
