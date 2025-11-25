@@ -33,23 +33,40 @@ def NonInputExecution(query):
 def InputExecution(tag,query):
 
     if 'play' in tag:
-        song = query.replace('play', '')
-        import pywhatkit
-        Say('playing' + song)
-        pywhatkit.playonyt(song)
+        try:
+            song = query.replace('play', '')
+            import pywhatkit
+            Say('playing' + song)
+            pywhatkit.playonyt(song)
+        except Exception as e:
+            print(f"Error playing video: {e}")
+            Say("Sorry, I couldn't play that video.")
 
     elif "wikipedia" in tag:
-        name = str(query).replace("who is","").replace("about","").replace("what is","").replace("wikipedia","")
-        import wikipedia
-        name = wikipedia.summary(query,2)
-        result = wikipedia.summary(name)
-        Say(result)
+        try:
+            name = str(query).replace("who is","").replace("about","").replace("what is","").replace("wikipedia","")
+            import wikipedia
+            result = wikipedia.summary(name, sentences=2)
+            Say(result)
+        except wikipedia.exceptions.DisambiguationError as e:
+            print(f"Wikipedia disambiguation error: {e}")
+            Say("There are multiple results. Please be more specific.")
+        except wikipedia.exceptions.PageError:
+            print(f"Wikipedia page not found: {name}")
+            Say("Sorry, I couldn't find information about that.")
+        except Exception as e:
+            print(f"Error fetching Wikipedia data: {e}")
+            Say("Sorry, I encountered an error searching Wikipedia.")
             
     elif "google" in tag:
-        query = str(query).replace("google","")
-        query = query.replace("search","")
-        import pywhatkit
-        pywhatkit.search(query)
+        try:
+            query = str(query).replace("google","")
+            query = query.replace("search","")
+            import pywhatkit
+            pywhatkit.search(query)
+        except Exception as e:
+            print(f"Error performing Google search: {e}")
+            Say("Sorry, I couldn't perform the search.")
 
     
     

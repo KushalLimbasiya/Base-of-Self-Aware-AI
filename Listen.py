@@ -18,10 +18,18 @@ def Listen():
         print("Recognizing..")
         query = r.recognize_google(audio,language="en-in")
         print(f"You Said : {query}")
+        query = str(query)
+        return query.lower()
 
-    except:
+    except sr.UnknownValueError:
+        print("Could not understand audio. Please speak clearly.")
         return ""
-
-    query = str(query)
-    return query.lower()
+    
+    except sr.RequestError as e:
+        print(f"Speech recognition service error: {e}")
+        return ""
+    
+    except Exception as e:
+        print(f"Unexpected error in Listen: {e}")
+        return ""
 
