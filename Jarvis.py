@@ -51,34 +51,48 @@ from Listen import Listen
 from Speak import Say
 from Task import InputExecution
 from Task import NonInputExecution
+from Validator import sanitize_query, validate_intent_tag, validate_confidence
 
 def Main():
     try:
         sentence = Listen()
-        result = str(sentence)
+        
+        # Validate and sanitize input
+        sanitized_sentence = sanitize_query(sentence)
+        if not sanitized_sentence:
+            logger.warning("Invalid or potentially malicious input detected, skipping")
+            return
+        
+        result = str(sanitized_sentence)
 
-        if sentence == "stop":
-            Main()
+        if sanitized_sentence == "stop":
+            return
 
-        elif sentence == "bye":
+        elif sanitized_sentence == "bye":
             Say("Goodbye!")
             exit()
 
-        sentence = tokenize(sentence)
-        X = bag_of_words(sentence,all_words)
-        X = X.reshape(1,X.shape[0])
+        sentence_tokens = tokenize(sanitized_sentence)
+        X = bag_of_words(sentence_tokens, all_words)
+        X = X.reshape(1, X.shape[0])
         X = torch.from_numpy(X).to(device)
 
         output = model(X)
 
-        _ , predicted = torch.max(output,dim=1)
+        _, predicted = torch.max(output, dim=1)
 
         tag = tags[predicted.item()]
+        
+        # Validate intent tag
+        if not validate_intent_tag(tag, tags):
+            logger.error(f"Invalid tag predicted: {tag}")
+            return
 
-        probs = torch.softmax(output,dim=1)
+        probs = torch.softmax(output, dim=1)
         prob = probs[0][predicted.item()]
-
-        if prob.item() > 0.75:
+        
+        # Validate confidence with threshold
+        if validate_confidence(prob.item(), threshold=0.75):
             for intent in intents['intents']:
                 if tag == intent["tag"]:
                     reply = random.choice(intent["responses"])
@@ -93,10 +107,10 @@ def Main():
                         NonInputExecution(reply)  
 
                     elif "wikipedia" in reply:
-                        InputExecution(reply,result)
+                        InputExecution(reply, result)
 
                     elif "google" in reply:
-                        InputExecution(reply,result)
+                        InputExecution(reply, result)
                     
                     elif "play" in reply:
                         InputExecution(reply, result)

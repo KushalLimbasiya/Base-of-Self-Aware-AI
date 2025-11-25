@@ -1,6 +1,7 @@
 import datetime
 from Speak import Say
 from Logger import setup_logger
+from Validator import sanitize_search_query
 
 logger = setup_logger(__name__, 'jarvis.log')
 
@@ -35,11 +36,21 @@ def NonInputExecution(query):
 
 
 
-def InputExecution(tag,query):
+def InputExecution(tag, query):
+    
+    # Sanitize the query before processing
+    sanitized_query = sanitize_search_query(query)
+    if not sanitized_query:
+        logger.warning(f"Invalid search query rejected: {query}")
+        Say("Sorry, that query is invalid.")
+        return
 
     if 'play' in tag:
         try:
-            song = query.replace('play', '')
+            song = sanitized_query.replace('play', '').strip()
+            if not song:
+                Say("Please specify what to play.")
+                return
             import pywhatkit
             logger.info(f"Playing on YouTube: {song}")
             Say('playing' + song)
@@ -50,7 +61,10 @@ def InputExecution(tag,query):
 
     elif "wikipedia" in tag:
         try:
-            name = str(query).replace("who is","").replace("about","").replace("what is","").replace("wikipedia","")
+            name = sanitized_query.replace("who is", "").replace("about", "").replace("what is", "").replace("wikipedia", "").strip()
+            if not name:
+                Say("Please specify what to search for.")
+                return
             import wikipedia
             logger.info(f"Searching Wikipedia for: {name}")
             result = wikipedia.summary(name, sentences=2)
@@ -67,11 +81,13 @@ def InputExecution(tag,query):
             
     elif "google" in tag:
         try:
-            query = str(query).replace("google","")
-            query = query.replace("search","")
+            search_query = sanitized_query.replace("google", "").replace("search", "").strip()
+            if not search_query:
+                Say("Please specify what to search for.")
+                return
             import pywhatkit
-            logger.info(f"Performing Google search for: {query}")
-            pywhatkit.search(query)
+            logger.info(f"Performing Google search for: {search_query}")
+            pywhatkit.search(search_query)
         except Exception as e:
             logger.error(f"Error performing Google search: {e}")
             Say("Sorry, I couldn't perform the search.")
