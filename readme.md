@@ -29,11 +29,58 @@ Base of Self-Aware AI is an open-source project that serves as a foundational fr
 ## Installation
 
 To install and run the project locally, follow these steps:
- 
-1. Clone the repository: `git clone https://github.com/KushalLimbasiya/Base-of-Self-Aware-AI.git`
-2. Navigate to the project directory: `cd Base-of-Self-Aware-AI`
-3. Install dependencies: `pip install -r requirements.txt`
-4. Start the project: `python3 Jarvis.py`
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/KushalLimbasiya/Base-of-Self-Aware-AI.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd Base-of-Self-Aware-AI
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Download required NLTK data:
+
+   ```bash
+   python -c "import nltk; nltk.download('punkt_tab')"
+   ```
+
+5. Train the neural network model (required before first run):
+
+   ```bash
+   python Train.py
+   ```
+
+   This will create the `TrainData.pth` file needed by Jarvis.
+
+6. Start the project:
+
+   ```bash
+   python Jarvis.py
+   ```
+
+### Troubleshooting
+
+**Error: `FileNotFoundError: TrainData.pth`**
+
+- Solution: Run `python Train.py` first to generate the training data file.
+
+**Error: `LookupError: Resource punkt_tab not found`**
+
+- Solution: Download NLTK data using `python -c "import nltk; nltk.download('punkt_tab')"`
+
+**Missing speech recognition modules:**
+
+- Ensure all dependencies are installed: `pip install SpeechRecognition pyaudio pyttsx3`
 
 ## Usage
 
