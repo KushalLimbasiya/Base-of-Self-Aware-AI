@@ -8,8 +8,16 @@ from Logger import setup_logger
 
 logger = setup_logger(__name__, 'jarvis.log')
 
+def _get_max_length():
+    """Get max input length from config, with fallback."""
+    try:
+        from Config import get_config
+        return get_config().get('validation.max_input_length', 500)
+    except:
+        return 500
+
 # Maximum allowed input length
-MAX_INPUT_LENGTH = 500
+MAX_INPUT_LENGTH = _get_max_length()
 
 # Patterns that might indicate malicious input
 DANGEROUS_PATTERNS = [

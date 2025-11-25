@@ -1,3 +1,14 @@
+"""Training script for Jarvis intent classification model.
+
+This script:
+1. Loads intents from intents.json
+2. Preprocesses the data (tokenization, stemming, bag-of-words)
+3. Trains a neural network to classify intents
+4. Saves the trained model to TrainData.pth
+
+Run this script before using Jarvis to generate the model file.
+"""
+
 import numpy as np
 import json
 import torch
@@ -50,8 +61,19 @@ output_size = len(tags)
 print("Training The Model..")
 
 class ChatDataset(Dataset):
+    """PyTorch Dataset for intent classification training.
+    
+    Wraps the preprocessed training data (bag-of-words features
+    and intent labels) for use with PyTorch DataLoader.
+    
+    Attributes:
+        n_samples (int): Number of training samples
+        x_data (np.ndarray): Feature vectors (bag-of-words)
+        y_data (np.ndarray): Intent labels (indices)
+    """
 
     def __init__(self):
+        """Initialize the dataset with preprocessed data."""
         self.n_samples = len(x_train)
         self.x_data = x_train
         self.y_data = y_train

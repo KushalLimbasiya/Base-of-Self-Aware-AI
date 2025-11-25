@@ -21,10 +21,14 @@ Base of Self-Aware AI is an open-source project that serves as a foundational fr
 
 ## Features
 
-- **Modular Structure:** The project is organized into separate modules, each focusing on a specific aspect of self-aware AI.
-- **Sample Implementations:** Sample code and implementations showcase self-awareness concepts in action.
-- **Documentation:** Detailed documentation explaining the core concepts and how to use the project effectively.
-- **Contributor-Friendly:** We welcome contributions from the community to enhance and extend the project.
+- 🧠 **Neural Network Brain** - PyTorch-based intent classification
+- 🎤 **Voice Recognition** - Speech-to-text using Google Speech API
+- 🔊 **Text-to-Speech** - Natural voice responses with pyttsx3
+- 🌐 **Web Integration** - Wikipedia search, Google search, YouTube playback
+- ⏰ **Utilities** - Time, date, and day queries
+- 📦 **Modular Design** - Separate modules for brain, listening, speaking, and tasks
+- 🎯 **Intent Training** - Customizable intents via `intents.json`
+- 🚀 **Easy Setup** - Train and run with simple commands
 
 ## Installation
 
