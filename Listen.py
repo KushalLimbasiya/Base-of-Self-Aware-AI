@@ -1,3 +1,9 @@
+"""Speech recognition module for Jarvis.
+
+This module handles audio input from the microphone and converts
+speech to text using Google's Speech Recognition API.
+"""
+
 import speech_recognition as sr 
 from speech_recognition import Recognizer
 import time
@@ -7,6 +13,22 @@ logger = setup_logger(__name__, 'jarvis.log')
 
 
 def Listen():
+    """Listen to microphone input and convert speech to text.
+    
+    Uses Google Speech Recognition to process audio from the default
+    microphone. Includes ambient noise adjustment for better accuracy.
+    
+    Returns:
+        str: The recognized text in lowercase, or empty string if:
+            - Audio could not be understood
+            - Speech recognition service failed
+            - Any other error occurred
+    
+    Example:
+        >>> query = Listen()
+        >>> print(f"You said: {query}")
+        You said: what is the time
+    """
 
     r = sr.Recognizer()
     mic = sr.Microphone()

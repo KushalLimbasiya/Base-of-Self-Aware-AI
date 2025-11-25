@@ -1,0 +1,58 @@
+# Jarvis Configuration File
+
+# Bot Settings
+bot:
+  name: "Nirav"
+  username: "Meet"
+  voice_rate: 170
+  voice_index: 0  # Index of the voice to use
+  
+# Model Settings
+model:
+  confidence_threshold: 0.75
+  hidden_size: 8
+  num_epochs: 1000
+  batch_size: 8
+  learning_rate: 0.001
+  model_file: "TrainData.pth"
+  intents_file: "intents.json"
+  
+# Audio Settings
+audio:
+  language: "en-in"
+  pause_threshold: 1
+  listen_timeout: 0
+  phrase_time_limit: 4
+  
+# Validation Settings
+validation:
+  max_input_length: 500
+  enable_sanitization: true
+  
+# Logging Settings
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  log_file: "jarvis.log"
+  log_to_console: true
+  log_to_file: true
+  
+# Feature Flags
+features:
+  enable_wikipedia: true
+  enable_google_search: true
+  enable_youtube: true
+  enable_time_commands: true
+  enable_web_search: true
+
+# Memory System Configuration
+memory:
+  enable_history: true
+  history_db_path: "data/memory.db"
+  working_memory_size: 20
+
+# Web Search Configuration
+web_search:
+  enabled: true
+  max_results: 5
+  timeout: 10
+  rate_limit_seconds: 1.0
