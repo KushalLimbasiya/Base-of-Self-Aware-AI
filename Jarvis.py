@@ -20,6 +20,9 @@ from NeuralNetwork import bag_of_words, tokenize
 from Logger import setup_logger, get_metrics_logger
 from Config import get_config
 from MemorySystem import MemorySystem, ConversationTurn
+from UserProfile import UserProfileManager
+from NameDetector import NameDetector
+from PersonalInfoExtractor import PersonalInfoExtractor
 import time
 
 logger = setup_logger(__name__, 'jarvis.log')
@@ -31,6 +34,13 @@ memory_system = MemorySystem(
     working_capacity=config.get('memory.working_memory_size', 20),
     db_path=config.get('memory.history_db_path', 'data/memory.db')
 )
+
+# Initialize user profile system
+profile_manager = UserProfileManager(db_path='data/memory.db')
+name_detector = NameDetector()
+info_extractor = PersonalInfoExtractor()
+user_profile = profile_manager.get_profile()
+logger.info(f"User profile loaded: {user_profile.user_name or 'No name set'}")
 
 # Generate unique session ID
 session_id = f"session_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"

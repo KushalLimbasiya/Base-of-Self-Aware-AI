@@ -1,4 +1,4 @@
-"""Web search integration for Jarvis using DuckDuckGo.
+"""Web search integration for Atom using DuckDuckGo.
 
 Provides privacy-focused web search capabilities without requiring API keys.
 Results are extracted, summarized, and spoken to the user.
@@ -15,7 +15,7 @@ from dataclasses import dataclass
 import time
 from Logger import setup_logger
 
-logger = setup_logger(__name__, 'jarvis.log')
+logger = setup_logger(__name__, 'atom.log')
 
 
 @dataclass

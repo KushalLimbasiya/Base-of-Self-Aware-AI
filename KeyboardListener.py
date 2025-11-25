@@ -7,7 +7,7 @@ This runs as a background thread.
 from pynput import keyboard
 from Logger import setup_logger
 
-logger = setup_logger(__name__, 'jarvis.log')
+logger = setup_logger(__name__, 'atom.log')
 
 # Flag to control listener
 listener_active = False

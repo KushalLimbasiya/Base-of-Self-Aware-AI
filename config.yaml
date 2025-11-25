@@ -2,8 +2,8 @@
 
 # Bot Settings
 bot:
-  name: "Nirav"
-  username: "Meet"
+  name: "Atom"
+  username: "User"
   voice_rate: 170
   voice_index: 0  # Index of the voice to use
   
@@ -32,7 +32,7 @@ validation:
 # Logging Settings
 logging:
   level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-  log_file: "jarvis.log"
+  log_file: "atom.log"
   log_to_console: true
   log_to_file: true
   

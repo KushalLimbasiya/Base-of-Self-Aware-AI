@@ -1,4 +1,4 @@
-"""Task execution module for Jarvis.
+"""Task execution module for Atom.
 
 This module handles executing various commands including:
 - Time/date/day queries
@@ -14,7 +14,7 @@ from Validator import sanitize_search_query
 from WebSearch import WebSearch
 from typing import Optional
 
-logger = setup_logger(__name__, 'jarvis.log')
+logger = setup_logger(__name__, 'atom.log')
 
 # Initialize web search module
 web_search = WebSearch()
@@ -137,19 +137,32 @@ def InputExecution(tag, query):
             if not name:
                 Say("Please specify what to search for.")
                 return
-            import wikipedia
+            
+            try:
+                import wikipedia
+            except ImportError:
+                logger.error("Wikipedia module not installed")
+                Say("Wikipedia search is not available. Please install the wikipedia package.")
+                return
+            
             logger.info(f"Searching Wikipedia for: {name}")
             result = wikipedia.summary(name, sentences=2)
             Say(result)
-        except wikipedia.exceptions.DisambiguationError as e:
-            logger.warning(f"Wikipedia disambiguation error: {e}")
-            Say("There are multiple results. Please be more specific.")
-        except wikipedia.exceptions.PageError:
-            logger.warning(f"Wikipedia page not found: {name}")
-            Say("Sorry, I couldn't find information about that.")
         except Exception as e:
-            logger.error(f"Error fetching Wikipedia data: {e}")
-            Say("Sorry, I encountered an error searching Wikipedia.")
+            # Check if it's a wikipedia-specific error
+            if 'wikipedia' in str(type(e).__module__):
+                if 'DisambiguationError' in str(type(e).__name__):
+                    logger.warning(f"Wikipedia disambiguation error: {e}")
+                    Say("There are multiple results. Please be more specific.")
+                elif 'PageError' in str(type(e).__name__):
+                    logger.warning(f"Wikipedia page not found: {name}")
+                    Say("Sorry, I couldn't find information about that.")
+                else:
+                    logger.error(f"Wikipedia error: {e}")
+                    Say("Sorry, I encountered an error searching Wikipedia.")
+            else:
+                logger.error(f"Error fetching Wikipedia data: {e}")
+                Say("Sorry, I encountered an error searching Wikipedia.")
             
     elif "google" in tag or "search" in tag:
         try:
@@ -212,3 +225,18 @@ def WebSearchExecution(query: str) -> Optional[str]:
         logger.error(f"Error in web search: {e}", exc_info=True)
         Say("Sorry, I encountered an error while searching.")
         return None
+
+
+def ProfileDelete(profile_manager):
+    """Delete user profile data.
+    
+    Args:
+        profile_manager: UserProfileManager instance
+    """
+    try:
+        profile_manager.delete_profile()
+        logger.info("User profile deleted")
+        return True
+    except Exception as e:
+        logger.error(f"Error deleting profile: {e}")
+        return False

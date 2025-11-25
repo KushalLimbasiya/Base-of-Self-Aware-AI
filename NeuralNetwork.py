@@ -1,4 +1,4 @@
-"""Natural language processing utilities for Jarvis.
+"""Natural language processing utilities for Atom.
 
 This module provides NLP functions for tokenization, stemming,
 and bag-of-words conversion used in intent classification.

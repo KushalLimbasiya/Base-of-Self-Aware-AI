@@ -1,5 +1,5 @@
 """
-Configuration management for Jarvis.
+Configuration management for Atom.
 Loads settings from config.yaml file.
 """
 
@@ -7,10 +7,10 @@ import yaml
 from pathlib import Path
 from Logger import setup_logger
 
-logger = setup_logger(__name__, 'jarvis.log')
+logger = setup_logger(__name__, 'atom.log')
 
 class Config:
-    """Configuration manager for Jarvis settings."""
+    """Configuration manager for Atom settings."""
     
     def __init__(self, config_file='config.yaml'):
         """
@@ -72,7 +72,7 @@ class Config:
             },
             'logging': {
                 'level': 'INFO',
-                'log_file': 'jarvis.log',
+                'log_file': 'atom.log',
                 'log_to_console': True,
                 'log_to_file': True
             },

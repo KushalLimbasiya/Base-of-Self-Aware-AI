@@ -1,4 +1,4 @@
-"""Speech recognition module for Jarvis.
+"""Speech recognition module for Atom.
 
 This module handles audio input from the microphone and converts
 speech to text using Google's Speech Recognition API.
@@ -9,7 +9,7 @@ from speech_recognition import Recognizer
 import time
 from Logger import setup_logger
 
-logger = setup_logger(__name__, 'jarvis.log')
+logger = setup_logger(__name__, 'atom.log')
 
 
 def Listen():
