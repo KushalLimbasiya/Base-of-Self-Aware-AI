@@ -1,40 +1,103 @@
-# Local documentation
-IMPROVEMENTS.md
-SELF_AWARE_AI_GUIDE.md
-TECHNICAL_SPEC_V2.md
-LIDA_ARCHITECTURE_SPEC.md
-
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-*.egg-info/
-dist/
-build/
 
-# Virtual environments
+# Virtual Environments
 venv/
 env/
-.venv/
+ENV/
+.venv
 
-# IDE
+# API Keys & Environment
+.env
+.env.local
+*.key
+
+# Databases (local testing)
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/test_*.db
+data/memory_test.db
+
+# Vector Databases (ChromaDB)
+data/vector_db/
+data/test_vector/
+data/test_vector_db/
+data/test_phase1_vector/
+*.parquet
+*.duckdb
+
+# Logs
+logs/
+*.log
+log/
+
+# IDE & Editor
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# Logs
-*.log
-
-# OS files
+*~
 .DS_Store
 Thumbs.db
 
-# Environment variables
-.env
-.env.local
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
 
-# Trained model (optional - uncomment if you don't want to track it)
-# TrainData.pth
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Model files (optional - keep TrainData.pth but ignore test models)
+data/test_*.pth
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Audio/Video (recordings from testing)
+*.wav
+*.mp3
+*.mp4
+recordings/
+
+# Sentence transformers cache
+.cache/
+sentence_transformers_cache/
+
+# HuggingFace cache (optional)
+models/
+huggingface_cache/
+tests/README.md
