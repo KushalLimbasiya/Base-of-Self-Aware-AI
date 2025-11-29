@@ -1,0 +1,136 @@
+# Atom AI Configuration File
+# All settings for the AI assistant
+
+# Bot Configuration
+bot:
+  name: "Atom"                    # Name of the AI assistant
+  username: "User"                 # Default username if not detected
+  version: "2.0.0"
+
+# LLM Provider Settings
+llm:
+  default_provider: "groq"         # Options: groq, google, cerebras
+  max_tokens: 500                  # Maximum tokens in response
+  temperature: 0.7                 # Response creativity (0.0-1.0)
+  fallback_enabled: true           # Auto-fallback to other providers on error
+  
+  # Provider-specific settings
+  providers:
+    groq:
+      model: "llama-3.3-70b-versatile"
+      enabled: true
+    google:
+      model: "gemini-flash-latest"
+      enabled: true
+    cerebras:
+      model: "llama3.1-8b"
+      enabled: true
+
+# Memory System Configuration
+memory:
+  working_memory_size: 20          # Number of recent conversations in RAM
+  history_db_path: "data/memory.db"  # SQLite database path
+  context_window: 5                # Number of past conversations for context
+  
+  # Vector Memory (RAG)
+  vector_memory:
+    enabled: true
+    persist_directory: "data/vector_db"
+    collection_name: "conversations"
+    embedding_model: "all-MiniLM-L6-v2"  # Sentence transformer model
+    similarity_threshold: 0.7      # Minimum similarity for retrieval
+    max_results: 3                 # Max similar conversations to retrieve
+
+# Neural Network (Legacy - for fallback intent classification)
+model:
+  model_file: "TrainData.pth"
+  intents_file: "config/intents.json"
+  confidence_threshold: 0.75       # Minimum confidence for intent execution
+
+# Speech Recognition
+speech:
+  recognition:
+    engine: "google"               # Options: google, sphinx
+    timeout: 5                     # Listen timeout in seconds
+    phrase_time_limit: 10          # Max phrase duration
+    energy_threshold: 4000         # Noise threshold
+    
+  synthesis:
+    engine: "pyttsx3"              # Text-to-speech engine
+    rate: 150                      # Speech rate (words per minute)
+    volume: 0.9                    # Volume (0.0-1.0)
+    voice_index: 0                 # Voice selection index
+
+# User Profile
+profile:
+  auto_detect_name: true           # Automatically detect user name from conversation
+  auto_detect_location: true       # Automatically detect location
+  auto_detect_interests: true      # Automatically detect interests
+  save_conversation_count: true    # Track total conversations
+
+# Logging
+logging:
+  level: "INFO"                    # Options: DEBUG, INFO, WARNING, ERROR
+  console_output: true             # Print logs to console
+  file_output: true                # Write logs to file
+  log_directory: "logs"            # Log file directory
+  max_file_size_mb: 10             # Max log file size before rotation
+  backup_count: 5                  # Number of backup log files to keep
+
+# Performance & Metrics
+metrics:
+  enabled: true                    # Track performance metrics
+  track_response_time: true        # Measure response times
+  track_provider_usage: true       # Track which LLM providers are used
+  session_summary: true            # Print session summary on exit
+
+# Task Execution
+tasks:
+  web_search:
+    enabled: true
+    default_engine: "duckduckgo"   # Options: duckduckgo, google
+    max_results: 5
+    
+  wikipedia:
+    enabled: true
+    sentences: 2                   # Number of sentences to summarize
+    
+  youtube:
+    enabled: true
+    autoplay: false                # Auto-play videos
+
+# Advanced Features
+advanced:
+  multi_turn_conversation: true    # Remember context across turns
+  emotion_detection: false         # Detect user emotion (future)
+  proactive_suggestions: false     # Suggest actions (future)
+  multi_language: false            # Support multiple languages (future)
+
+# Development & Debug
+development:
+  debug_mode: false                # Enable debug features
+  verbose_logging: false           # Extra detailed logs
+  test_mode: false                 # Use test database
+  mock_speech: false               # Bypass actual speech I/O for testing
+
+# Rate Limiting
+rate_limiting:
+  enabled: true
+  max_requests_per_minute:
+    groq: 30
+    google: 15
+    cerebras: 60
+  
+# Safety & Validation
+safety:
+  input_validation: true           # Validate user input
+  max_input_length: 500            # Max characters in user input
+  sanitize_queries: true           # Remove potentially harmful input
+  block_unsafe_commands: true      # Block system commands
+
+# Paths (relative to project root)
+paths:
+  data_directory: "data"
+  logs_directory: "logs"
+  config_directory: "config"
+  models_directory: "."            # For TrainData.pth
