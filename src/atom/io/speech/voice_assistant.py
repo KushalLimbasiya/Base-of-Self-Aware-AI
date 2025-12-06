@@ -1,16 +1,13 @@
 """Voice Assistant Module for Atom AI.
 
-Provides a unified voice interface that works like real voice assistants:
-- Continuous listening with automatic speech detection
-- Smart silence detection to know when user stops speaking
-- Non-blocking responses (speak while ready to listen)
-- Natural conversation flow
-
-Uses Whisper for STT and Edge TTS for natural speech output.
+Features:
+- Whisper STT (local, GPU accelerated)
+- Edge TTS (consistent voice)
+- Barge-in: Listen while speaking, can interrupt
+- Auto silence detection
 """
 
 import threading
-import queue
 import time
 import numpy as np
 import sounddevice as sd
@@ -18,64 +15,39 @@ from atom.utils.logger import setup_logger
 
 logger = setup_logger(__name__, 'atom.log')
 
-# Global state
-_is_listening = False
-_is_speaking = False
-_stop_requested = False
-_audio_queue = queue.Queue()
-_whisper_model = None
-
 
 class VoiceAssistant:
-    """Voice assistant with natural conversation flow.
+    """Voice assistant with barge-in support.
     
-    Features:
-    - Continuous listening with VAD (Voice Activity Detection)
-    - Auto speech end detection (silence threshold)
-    - Non-blocking TTS (can interrupt)
-    - Listen while speaking (barge-in ready)
+    Listens continuously even while speaking, allowing user to interrupt.
     """
+    
+    # Fixed voice for consistency
+    TTS_VOICE = "en-US-AriaNeural"
     
     def __init__(
         self,
         whisper_model: str = "small",
-        tts_voice: str = "en-US-AriaNeural",
         silence_threshold: float = 0.01,
-        silence_duration: float = 1.0,
+        silence_duration: float = 1.5,
         sample_rate: int = 16000
     ):
-        """Initialize voice assistant.
-        
-        Args:
-            whisper_model: Whisper model size (tiny/base/small/medium)
-            tts_voice: Edge TTS voice name
-            silence_threshold: Audio level to detect silence
-            silence_duration: Seconds of silence to stop recording
-            sample_rate: Audio sample rate
-        """
         self.whisper_model_size = whisper_model
-        self.tts_voice = tts_voice
         self.silence_threshold = silence_threshold
         self.silence_duration = silence_duration
         self.sample_rate = sample_rate
         
-        # Language-specific TTS voices
-        self.tts_voices = {
-            "en": "en-US-AriaNeural",      # English
-            "hi": "hi-IN-SwaraNeural",      # Hindi
-            "gu": "gu-IN-DhwaniNeural"      # Gujarati
-        }
-        
         self._model = None
         self._is_listening = False
         self._is_speaking = False
-        self._stop_flag = False
-        self._last_detected_lang = "en"  # Default to English
+        self._stop_speaking = False
+        self._interrupt_text = None
+        self._pygame_initialized = False
         
-        logger.info("VoiceAssistant initialized (EN/HI/GU supported)")
+        logger.info("VoiceAssistant initialized")
     
     def _load_whisper(self):
-        """Load Whisper model (lazy loading)."""
+        """Load Whisper model with GPU if available."""
         if self._model is None:
             import whisper
             import torch
@@ -87,31 +59,19 @@ class VoiceAssistant:
         return self._model
     
     def listen(self, max_duration: float = 10.0) -> str:
-        """Listen for speech with automatic end detection.
-        
-        Starts recording when sound detected, stops when silence detected.
-        
-        Args:
-            max_duration: Maximum recording duration
-            
-        Returns:
-            Transcribed text
-        """
+        """Listen for speech with silence detection."""
         self._is_listening = True
-        self._stop_flag = False
+        self._stop_speaking = False
         
         print("🎤 Listening...")
         logger.info("Listening started")
         
         try:
-            # Record with silence detection
             audio = self._record_with_vad(max_duration)
             
-            if audio is None or len(audio) < self.sample_rate * 0.5:  # Less than 0.5s
-                logger.debug("No speech detected")
+            if audio is None or len(audio) < self.sample_rate * 0.5:
                 return ""
             
-            # Transcribe
             text = self._transcribe(audio)
             return text
             
@@ -119,25 +79,16 @@ class VoiceAssistant:
             self._is_listening = False
     
     def _record_with_vad(self, max_duration: float) -> np.ndarray:
-        """Record audio with Voice Activity Detection.
-        
-        Args:
-            max_duration: Maximum duration to record
-            
-        Returns:
-            Audio array or None if no speech
-        """
+        """Record with voice activity detection."""
         chunks = []
         silence_start = None
         has_speech = False
         
-        # Recording callback
         def callback(indata, frames, time_info, status):
-            if self._stop_flag:
+            if self._stop_speaking:
                 raise sd.CallbackAbort()
             chunks.append(indata.copy())
         
-        # Start recording
         with sd.InputStream(
             samplerate=self.sample_rate,
             channels=1,
@@ -147,7 +98,7 @@ class VoiceAssistant:
             start_time = time.time()
             
             while time.time() - start_time < max_duration:
-                if self._stop_flag:
+                if self._stop_speaking:
                     break
                 
                 time.sleep(0.1)
@@ -155,7 +106,6 @@ class VoiceAssistant:
                 if not chunks:
                     continue
                 
-                # Check latest chunk for speech
                 latest = chunks[-1].flatten()
                 level = np.abs(latest).max()
                 
@@ -166,7 +116,6 @@ class VoiceAssistant:
                     if silence_start is None:
                         silence_start = time.time()
                     elif time.time() - silence_start > self.silence_duration:
-                        logger.debug("Silence detected, stopping recording")
                         break
         
         if not chunks:
@@ -174,96 +123,99 @@ class VoiceAssistant:
         
         return np.concatenate(chunks).flatten()
     
-    def _transcribe(self, audio: np.ndarray) -> tuple:
-        """Transcribe audio using Whisper with auto language detection.
-        
-        Returns:
-            Tuple of (transcribed_text, detected_language)
-        """
+    def _transcribe(self, audio: np.ndarray) -> str:
+        """Transcribe audio using Whisper."""
         import whisper
         
         model = self._load_whisper()
         
-        logger.info("Transcribing with auto language detection...")
+        logger.info("Transcribing...")
         audio = whisper.pad_or_trim(audio)
         mel = whisper.log_mel_spectrogram(audio).to(model.device)
         
-        # Detect language first
-        _, probs = model.detect_language(mel)
-        detected_lang = max(probs, key=probs.get)
-        
-        # Only allow en, hi, gu - default to en for others
-        if detected_lang not in ["en", "hi", "gu"]:
-            detected_lang = "en"
-        
-        logger.info(f"Detected language: {detected_lang}")
-        
-        # Transcribe in detected language
-        options = whisper.DecodingOptions(language=detected_lang, fp16=False)
+        # Always transcribe in English for consistency
+        options = whisper.DecodingOptions(language="en", fp16=False)
         result = whisper.decode(model, mel, options)
         
         text = result.text.strip()
-        logger.info(f"Transcribed ({detected_lang}): {text}")
-        
-        # Store for TTS to use same language
-        self._last_detected_lang = detected_lang
-        
+        logger.info(f"Transcribed: {text}")
         return text
     
-    def speak(self, text: str, blocking: bool = True) -> None:
-        """Speak text using Edge TTS.
+    def speak(self, text: str, allow_interrupt: bool = True) -> str:
+        """Speak text with barge-in support.
         
         Args:
             text: Text to speak
-            blocking: Wait for speech to finish if True
+            allow_interrupt: If True, listen for interruption while speaking
+            
+        Returns:
+            Interrupt text if user interrupted, else empty string
         """
         if not text:
-            return
+            return ""
         
         self._is_speaking = True
+        self._stop_speaking = False
+        self._interrupt_text = None
         
-        if blocking:
-            self._speak_sync(text)
-        else:
-            thread = threading.Thread(target=self._speak_sync, args=(text,))
-            thread.daemon = True
-            thread.start()
+        # Start speech in thread
+        speech_thread = threading.Thread(target=self._speak_async, args=(text,))
+        speech_thread.daemon = True
+        speech_thread.start()
+        
+        # Start background listener for interrupt if enabled
+        if allow_interrupt:
+            interrupt_thread = threading.Thread(target=self._listen_for_interrupt)
+            interrupt_thread.daemon = True
+            interrupt_thread.start()
+        
+        # Wait for speech to complete
+        speech_thread.join()
+        
+        return self._interrupt_text or ""
     
-    def _speak_sync(self, text: str) -> None:
-        """Synchronous speech output with auto language voice."""
+    def _speak_async(self, text: str) -> None:
+        """Generate and play speech."""
         try:
             import asyncio
             import tempfile
             import edge_tts
             import pygame
             
-            # Select voice based on detected language
-            voice = self.tts_voices.get(self._last_detected_lang, self.tts_voice)
-            logger.info(f"Speaking ({self._last_detected_lang}): {text[:50]}...")
+            logger.info(f"Speaking: {text[:50]}...")
+            print(f"🔊 Atom: {text}")
             
             # Generate TTS
             async def generate():
                 with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as f:
-                    communicate = edge_tts.Communicate(text, voice)
+                    communicate = edge_tts.Communicate(text, self.TTS_VOICE)
                     await communicate.save(f.name)
                     return f.name
             
             audio_path = asyncio.run(generate())
             
-            # Play
-            pygame.mixer.init()
+            # Play audio
+            if not self._pygame_initialized:
+                pygame.mixer.init()
+                self._pygame_initialized = True
+            
             pygame.mixer.music.load(audio_path)
             pygame.mixer.music.play()
             
-            while pygame.mixer.music.get_busy() and not self._stop_flag:
+            # Wait until done or interrupted
+            while pygame.mixer.music.get_busy():
+                if self._stop_speaking:
+                    pygame.mixer.music.stop()
+                    logger.info("Speech interrupted by user")
+                    break
                 pygame.time.Clock().tick(10)
-            
-            pygame.mixer.music.stop()
-            pygame.mixer.quit()
             
             # Cleanup
             import os
-            os.unlink(audio_path)
+            try:
+                os.unlink(audio_path)
+            except:
+                pass
             
             logger.info("Speech complete")
             
@@ -272,9 +224,61 @@ class VoiceAssistant:
         finally:
             self._is_speaking = False
     
+    def _listen_for_interrupt(self) -> None:
+        """Background listener for barge-in."""
+        try:
+            # Wait a bit before starting to listen (let speech start)
+            time.sleep(1.0)
+            
+            if not self._is_speaking:
+                return
+            
+            # Quick record to check for speech
+            chunks = []
+            
+            def callback(indata, frames, time_info, status):
+                if not self._is_speaking:
+                    raise sd.CallbackAbort()
+                chunks.append(indata.copy())
+            
+            with sd.InputStream(
+                samplerate=self.sample_rate,
+                channels=1,
+                dtype='float32',
+                callback=callback
+            ):
+                while self._is_speaking:
+                    time.sleep(0.1)
+                    
+                    if not chunks:
+                        continue
+                    
+                    # Check for speech
+                    latest = chunks[-1].flatten()
+                    level = np.abs(latest).max()
+                    
+                    if level > self.silence_threshold * 3:  # Higher threshold for interrupt
+                        logger.info("User interrupt detected!")
+                        self._stop_speaking = True
+                        
+                        # Get remaining audio and transcribe
+                        if len(chunks) > 5:
+                            audio = np.concatenate(chunks).flatten()
+                            if len(audio) > self.sample_rate * 0.5:
+                                self._interrupt_text = self._transcribe(audio)
+                        break
+                    
+                    # Keep only last 2 seconds of audio
+                    max_chunks = int(2.0 * self.sample_rate / 1024)
+                    if len(chunks) > max_chunks:
+                        chunks = chunks[-max_chunks:]
+                        
+        except Exception as e:
+            logger.debug(f"Interrupt listener: {e}")
+    
     def stop(self) -> None:
-        """Stop listening and speaking."""
-        self._stop_flag = True
+        """Stop speaking."""
+        self._stop_speaking = True
         try:
             import pygame
             if pygame.mixer.get_init():
@@ -295,7 +299,6 @@ class VoiceAssistant:
 _assistant = None
 
 def get_assistant() -> VoiceAssistant:
-    """Get or create voice assistant instance."""
     global _assistant
     if _assistant is None:
         _assistant = VoiceAssistant()
@@ -303,30 +306,27 @@ def get_assistant() -> VoiceAssistant:
 
 
 def Listen(max_duration: float = 10.0) -> str:
-    """Listen for speech (simple interface)."""
     return get_assistant().listen(max_duration)
 
 
 def Say(text: str, blocking: bool = True) -> None:
-    """Speak text (simple interface)."""
-    get_assistant().speak(text, blocking)
+    get_assistant().speak(text, allow_interrupt=True)
 
 
 def StopSpeaking() -> None:
-    """Stop speaking."""
     get_assistant().stop()
 
 
 def IsSpeaking() -> bool:
-    """Check if speaking."""
     return get_assistant().is_speaking
 
 
 if __name__ == "__main__":
-    print("Voice Assistant Demo")
     print("=" * 50)
-    print("Speak naturally - I'll detect when you stop.")
-    print("Press Ctrl+C to exit.\n")
+    print("Voice Assistant with Barge-In")
+    print("Speak while Atom is talking to interrupt!")
+    print("Press Ctrl+C to exit")
+    print("=" * 50)
     
     assistant = VoiceAssistant()
     
@@ -335,11 +335,21 @@ if __name__ == "__main__":
             text = assistant.listen()
             if text:
                 print(f"\nYou said: {text}")
+                
+                # Check for exit
+                if any(word in text.lower() for word in ["bye", "goodbye", "exit", "quit"]):
+                    assistant.speak("Goodbye!")
+                    break
+                
+                # Echo response (can be replaced with LLM)
                 response = f"You said: {text}"
-                assistant.speak(response)
-                print()
+                interrupt = assistant.speak(response)
+                
+                if interrupt:
+                    print(f"\n[Interrupted with: {interrupt}]")
             else:
-                print("(no speech detected)")
+                print("(no speech)")
+                
     except KeyboardInterrupt:
         print("\nGoodbye!")
         assistant.stop()

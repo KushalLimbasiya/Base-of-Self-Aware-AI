@@ -6,6 +6,12 @@ bot:
   name: "Atom"                    # Name of the AI assistant
   username: "User"                 # Default username if not detected
   version: "2.0.0"
+  voice_index: 0                   # TTS voice index
+  voice_rate: 170                  # TTS speech rate
+
+# Input Validation
+validation:
+  max_input_length: 500            # Maximum input length in characters
 
 # LLM Provider Settings
 llm:
