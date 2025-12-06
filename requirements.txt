@@ -10,3 +10,17 @@ duckduckgo-search>=3.8.0
 requests>=2.31.0
 beautifulsoup4>=4.12.0
 pynput>=1.7.6
+
+# Free LLM Providers (Phase 1)
+cerebras-cloud-sdk>=1.0.0
+google-generativeai>=0.8.0
+groq>=0.9.0
+python-dotenv>=1.0.0
+
+# Vector Database & Embeddings (Phase 1)
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# Additional utilities
+aiohttp>=3.9.0
+tenacity>=8.2.0
