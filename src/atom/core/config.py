@@ -51,15 +51,7 @@ class Config:
                 'voice_rate': 170,
                 'voice_index': 0
             },
-            'model': {
-                'confidence_threshold': 0.75,
-                'hidden_size': 8,
-                'num_epochs': 1000,
-                'batch_size': 8,
-                'learning_rate': 0.001,
-                'model_file': 'TrainData.pth',
-                'intents_file': 'intents.json'
-            },
+
             'audio': {
                 'language': 'en-in',
                 'pause_threshold': 1,

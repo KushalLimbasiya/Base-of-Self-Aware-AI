@@ -41,11 +41,7 @@ memory:
     similarity_threshold: 0.7      # Minimum similarity for retrieval
     max_results: 3                 # Max similar conversations to retrieve
 
-# Neural Network (Legacy - for fallback intent classification)
-model:
-  model_file: "TrainData.pth"
-  intents_file: "config/intents.json"
-  confidence_threshold: 0.75       # Minimum confidence for intent execution
+
 
 # Speech Recognition
 speech:
@@ -133,4 +129,4 @@ paths:
   data_directory: "data"
   logs_directory: "logs"
   config_directory: "config"
-  models_directory: "."            # For TrainData.pth
+
