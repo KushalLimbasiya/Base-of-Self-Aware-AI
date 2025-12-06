@@ -21,8 +21,7 @@ from atom.memory.user_profile import UserProfileManager
 from atom.utils.name_detector import NameDetector
 from atom.utils.personal_info_extractor import PersonalInfoExtractor
 from atom.utils.validator import sanitize_query
-from atom.io.speech.listen import Listen
-from atom.io.speech.speak import Say, StopSpeaking
+from atom.io.speech.voice_assistant import Listen, Say, StopSpeaking, IsSpeaking
 from atom.io.keyboard_listener import start_keyboard_listener, stop_keyboard_listener
 from atom.tasks.task_executor import InputExecution, NonInputExecution
 import time

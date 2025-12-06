@@ -8,10 +8,10 @@ This module handles executing various commands including:
 """
 
 import datetime
-from Speak import Say
+from atom.io.speech.speak import Say
 from atom.utils.logger import setup_logger
-from Validator import sanitize_search_query
-from WebSearch import WebSearch
+from atom.utils.validator import sanitize_query as sanitize_search_query
+from atom.tasks.web_search import WebSearch
 from typing import Optional
 
 logger = setup_logger(__name__, 'atom.log')

@@ -22,7 +22,7 @@ def on_press(key):
     try:
         # Check for 'q' key to stop speaking
         if hasattr(key, 'char') and key.char == 'q':
-            from Speak import StopSpeaking, IsSpeaking
+            from atom.io.speech.speak import StopSpeaking, IsSpeaking
             if IsSpeaking():
                 logger.info("'q' key pressed - stopping speech")
                 StopSpeaking()
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     listener = start_keyboard_listener()
     
     try:
-        from Speak import Say
+        from atom.io.speech.speak import Say
         import time
         
         # Test speech

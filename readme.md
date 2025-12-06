@@ -27,8 +27,8 @@ Atom is an advanced AI personal assistant that combines:
 
 ### Current (v2.0)
 - 🧠 **Advanced LLM Backend** - Gemini, Llama 3.3, with automatic fallback
-- 🎤 **Voice Recognition** - Natural speech-to-text
-- 🔊 **Text-to-Speech** - Multiple voice options
+- 🎤 **Voice Recognition** - OpenAI Whisper (offline, high accuracy)
+- 🔊 **Text-to-Speech** - Edge TTS (natural Microsoft voices)
 - 💾 **Memory System** - Remembers conversations and context
 - 👤 **User Profiles** - Personalized interactions
 - 🌐 **Web Integration** - Search, Wikipedia, YouTube
@@ -156,11 +156,11 @@ Base-of-Self-Aware-AI/
 - **LLMs**: Cerebras (Llama 3.1), Google (Gemini), Groq (Llama 3.3)
 - **Neural Network**: PyTorch for intent classification
 - **NLP**: NLTK for tokenization
-- **Memory**: ChromaDB (future), SQLite
+- **Memory**: ChromaDB (vector), SQLite (relational)
 
 ### I/O
-- **Speech Recognition**: SpeechRecognition + Google Speech API
-- **Text-to-Speech**: pyttsx3
+- **Speech Recognition**: OpenAI Whisper (local, high-quality) + SpeechRecognition fallback
+- **Text-to-Speech**: Edge TTS (natural Microsoft voices) + pyttsx3 fallback
 - **Keyboard**: pynput
 
 ### Web & Utilities
