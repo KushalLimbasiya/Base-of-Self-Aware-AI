@@ -24,10 +24,10 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Add current directory to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add src directory to path for imports
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src'))
 
-from LLMProvider import UnifiedLLMProvider, CerebrasProvider, GoogleAIProvider, GroqProvider
+from atom.core.llm_provider import UnifiedLLMProvider, CerebrasProvider, GoogleProvider, GroqProvider
 
 
 async def test_individual_provider(provider_name: str, provider):
@@ -157,7 +157,7 @@ async def main():
         results['cerebras'] = await test_individual_provider('cerebras', cerebras)
     
     if os.getenv('GOOGLE_API_KEY'):
-        google = GoogleAIProvider()
+        google = GoogleProvider()
         results['google'] = await test_individual_provider('google', google)
     
     if os.getenv('GROQ_API_KEY'):

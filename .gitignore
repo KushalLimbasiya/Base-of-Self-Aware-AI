@@ -38,6 +38,7 @@ log/
 
 # IDE & Editor
 .vscode/
+.kiro/
 .idea/
 *.swp
 *.swo
