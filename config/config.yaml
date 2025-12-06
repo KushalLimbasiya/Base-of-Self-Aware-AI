@@ -101,11 +101,25 @@ tasks:
     enabled: true
     autoplay: false                # Auto-play videos
 
+# Scheduler & Reminders
+scheduler:
+  enabled: true
+  check_interval: 30               # Check for due tasks every N seconds
+  db_path: "data/scheduler.db"     # Scheduler database
+  announce_on_startup: true        # Announce pending reminders on startup
+
+# Calendar Integration
+calendar:
+  enabled: true
+  db_path: "data/calendar.db"      # Local calendar database
+  google_api_enabled: false        # Enable Google Calendar API
+  # Set GOOGLE_CALENDAR_API_KEY in .env file
+
 # Advanced Features
 advanced:
   multi_turn_conversation: true    # Remember context across turns
   emotion_detection: false         # Detect user emotion (future)
-  proactive_suggestions: false     # Suggest actions (future)
+  proactive_suggestions: true      # Suggest actions based on context
   multi_language: false            # Support multiple languages (future)
 
 # Development & Debug

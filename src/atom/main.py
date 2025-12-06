@@ -24,7 +24,11 @@ from atom.utils.validator import sanitize_query
 from atom.io.speech.voice_assistant import Listen, Say, StopSpeaking, IsSpeaking
 from atom.io.keyboard_listener import start_keyboard_listener, stop_keyboard_listener
 from atom.tasks.task_executor import InputExecution, NonInputExecution
+from atom.tasks.scheduler import Scheduler, get_scheduler
+from atom.tasks.reminders import ReminderManager, get_reminder_manager
+from atom.tasks.calendar_integration import CalendarManager, get_calendar_manager
 import time
+import os
 
 logger = setup_logger(__name__, 'atom.log')
 metrics = get_metrics_logger()
@@ -59,6 +63,50 @@ USRNAME = config.get('bot.username', 'User')
 BOTNAME = config.get('bot.name', 'Atom')
 
 logger.info(f"Bot: {BOTNAME}, User: {USRNAME}")
+
+# Initialize proactive features
+def init_proactive_features():
+    """Initialize scheduler, reminders, and calendar."""
+    # Notification callback for voice alerts
+    def voice_notification(task):
+        Say(f"Reminder: {task.title}")
+    
+    # Initialize scheduler
+    scheduler = get_scheduler(notification_callback=voice_notification)
+    scheduler.start()
+    logger.info("Scheduler started")
+    
+    # Initialize reminder manager
+    reminder_manager = get_reminder_manager()
+    
+    # Initialize calendar with optional Google API
+    google_api_key = os.getenv('GOOGLE_CALENDAR_API_KEY')
+    calendar = get_calendar_manager(api_key=google_api_key)
+    
+    return scheduler, reminder_manager, calendar
+
+def startup_announcements(calendar, reminder_manager):
+    """Announce time-based greeting and pending notifications."""
+    # Time-based greeting
+    greeting = calendar.get_time_greeting()
+    name = user_profile.user_name or USRNAME
+    Say(f"{greeting}, {name}!")
+    
+    # Announce pending reminders
+    if config.get('scheduler.announce_on_startup', True):
+        overdue = reminder_manager.get_overdue_reminders()
+        if overdue:
+            Say(f"You have {len(overdue)} missed reminder{'s' if len(overdue) > 1 else ''}.")
+            for task in overdue[:2]:  # Max 2
+                Say(f"Reminder: {task.title}")
+                reminder_manager.scheduler.mark_notified(task.task_id)
+    
+    # Announce today's events
+    today_events = calendar.get_today_events()
+    if today_events:
+        next_event = today_events[0]
+        time_str = next_event.start_time.strftime("%I:%M %p")
+        Say(f"You have {len(today_events)} event{'s' if len(today_events) > 1 else ''} today. Next is {next_event.title} at {time_str}.")
 
 
 async def process_with_llm(user_input: str) -> str:
@@ -267,14 +315,21 @@ def main():
         logger.info(f"Memory system initialized")
         logger.info("="*50)
         
+        # Initialize proactive features (scheduler, reminders, calendar)
+        scheduler, reminder_manager, calendar = init_proactive_features()
+        
         # Start keyboard listener for speech interruption
         print("\n🤖 Atom AI Assistant v2.0")
         print(f"💬 Powered by: {llm.default_provider.capitalize()} (with auto-fallback)")
         print("💡 Tip: Press 'q' during speech to interrupt Atom")
         print("🗣️  Say 'bye' or 'goodbye' to exit\n")
-        print("Listening...\n")
         
         start_keyboard_listener()
+        
+        # Startup announcements (greeting + pending notifications)
+        startup_announcements(calendar, reminder_manager)
+        
+        print("Listening...\n")
         
         while True:
             Main()

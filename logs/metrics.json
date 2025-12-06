@@ -113,7 +113,33 @@
       },
       "end_time": "2025-12-07T00:46:39.011514",
       "duration_seconds": 123.845934
+    },
+    {
+      "start_time": "2025-12-07T01:06:49.876730",
+      "total_queries": 2,
+      "successful_queries": 2,
+      "failed_queries": 0,
+      "avg_confidence": 1.0,
+      "avg_response_time": 29.18709886074066,
+      "intents": {
+        "llm_conversation": 2
+      },
+      "end_time": "2025-12-07T01:08:11.041855",
+      "duration_seconds": 81.165139
+    },
+    {
+      "start_time": "2025-12-07T01:09:31.561071",
+      "total_queries": 7,
+      "successful_queries": 7,
+      "failed_queries": 0,
+      "avg_confidence": 1.0,
+      "avg_response_time": 18.10063546044486,
+      "intents": {
+        "llm_conversation": 7
+      },
+      "end_time": "2025-12-07T01:12:29.172762",
+      "duration_seconds": 177.611707
     }
   ],
-  "total_queries": 19
+  "total_queries": 28
 }
