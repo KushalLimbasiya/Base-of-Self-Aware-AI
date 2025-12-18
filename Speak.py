@@ -5,6 +5,7 @@ Now includes interrupt capability to stop speaking mid-sentence.
 """
 
 import pyttsx3
+import sys
 import threading
 from Logger import setup_logger
 from Config import get_config
@@ -24,14 +25,19 @@ def Init():
         pyttsx3.Engine: Initialized TTS engine
     """
     try:
-        engine = pyttsx3.init('sapi5')
+        # 'sapi5' is Windows-only; let pyttsx3 pick an appropriate driver elsewhere.
+        driver = 'sapi5' if sys.platform.startswith('win') else None
+        engine = pyttsx3.init(driver) if driver else pyttsx3.init()
         voices = engine.getProperty('voices')
         
         # Get voice settings from config
         voice_index = config.get('bot.voice_index', 0)
         voice_rate = config.get('bot.voice_rate', 170)
         
-        engine.setProperty('voice', voices[voice_index].id)
+        if voices:
+            if not isinstance(voice_index, int) or voice_index < 0 or voice_index >= len(voices):
+                voice_index = 0
+            engine.setProperty('voice', voices[voice_index].id)
         engine.setProperty('rate', voice_rate)
         logger.debug("TTS engine initialized successfully")
         return engine

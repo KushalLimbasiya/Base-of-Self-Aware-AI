@@ -10,6 +10,34 @@ from nltk.stem.porter import PorterStemmer
 
 Stemmer = PorterStemmer()
 
+
+def _ensure_nltk_punkt() -> None:
+    """Ensure the NLTK 'punkt' tokenizer resource is available.
+
+    Some environments install the NLTK package without its data resources.
+    This attempts a quiet download of 'punkt' when missing.
+    """
+    try:
+        nltk.data.find("tokenizers/punkt")
+        return
+    except LookupError:
+        pass
+
+    # Best-effort auto-download (no-op if already present)
+    try:
+        nltk.download("punkt", quiet=True)
+    except Exception:
+        pass
+
+    try:
+        nltk.data.find("tokenizers/punkt")
+    except LookupError as e:
+        raise LookupError(
+            "NLTK resource 'punkt' not found. Install it with: "
+            "python -c \"import nltk; nltk.download('punkt')\"\n"
+            "If you're offline, download it on another machine and set NLTK_DATA to the folder."
+        ) from e
+
 def tokenize(sentence):
     """Tokenize a sentence into individual words.
     
@@ -26,6 +54,7 @@ def tokenize(sentence):
         >>> tokenize("Hello, how are you?")
         ['Hello', ',', 'how', 'are', 'you', '?']
     """
+    _ensure_nltk_punkt()
     return nltk.word_tokenize(sentence)
 
 def stem(word):

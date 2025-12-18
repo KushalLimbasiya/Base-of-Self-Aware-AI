@@ -38,3 +38,5 @@ Thumbs.db
 
 # Trained model (optional - uncomment if you don't want to track it)
 # TrainData.pth
+.kiro/
+data/

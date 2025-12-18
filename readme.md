@@ -55,7 +55,7 @@ To install and run the project locally, follow these steps:
 4. Download required NLTK data:
 
    ```bash
-   python -c "import nltk; nltk.download('punkt_tab')"
+   python -c "import nltk; nltk.download('punkt')"
    ```
 
 5. Train the neural network model (required before first run):
@@ -78,9 +78,9 @@ To install and run the project locally, follow these steps:
 
 - Solution: Run `python Train.py` first to generate the training data file.
 
-**Error: `LookupError: Resource punkt_tab not found`**
+**Error: `LookupError: Resource punkt not found`**
 
-- Solution: Download NLTK data using `python -c "import nltk; nltk.download('punkt_tab')"`
+- Solution: Download NLTK data using `python -c "import nltk; nltk.download('punkt')"`
 
 **Missing speech recognition modules:**
 
