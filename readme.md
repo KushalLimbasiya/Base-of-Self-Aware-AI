@@ -1,4 +1,4 @@
-<h1 align="center">Atom</h1>
+<h1 align="center">Neural Voice Assistant</h1>
 
 <p align="center">
   A voice assistant with neural intent classification.
@@ -18,7 +18,7 @@
 
 ## About
 
-Atom is a Python voice assistant that maps spoken commands to actions using a
+Neural Voice Assistant is a Python voice assistant that maps spoken commands to actions using a
 small PyTorch neural network. Speech is transcribed, converted to a
 bag-of-words vector, and classified into one of 14 intents — each of which
 triggers a handler such as a Wikipedia lookup, a web search, or a YouTube
@@ -70,13 +70,13 @@ Requires **Python 3.9+** and a working microphone.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/KushalLimbasiya/atom.git
+   git clone https://github.com/KushalLimbasiya/neural-voice-assistant.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd atom
+   cd neural-voice-assistant
    ```
 
 3. Install dependencies:
@@ -125,7 +125,7 @@ Requires **Python 3.9+** and a working microphone.
 
 Run `python Jarvis.py` and speak a command. Some examples:
 
-| You say | Intent | Atom does |
+| You say | Intent | Neural Voice Assistant does |
 | --- | --- | --- |
 | "hello" | `greeting` | Greets you back |
 | "what is the time" | `time` | Reports the current time |
